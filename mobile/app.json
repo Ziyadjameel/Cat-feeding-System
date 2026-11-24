@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Cat Feeding",
+    "slug": "cat-feeding-system",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "predictiveBackGestureEnabled": false
+    },
+    "scheme": "catfeeding",
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
