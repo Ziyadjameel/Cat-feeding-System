@@ -28,3 +28,10 @@ class Feeding(Base):
     cat_id: Mapped[int] = mapped_column(ForeignKey("cats.id"))
     # Milliseconds since the Unix epoch, independent of the database timezone.
     fed_at: Mapped[int] = mapped_column(BigInteger)
+
+
+class FeedingLog(Base):
+    __tablename__ = "feeding_log"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    fed_at: Mapped[int] = mapped_column(BigInteger, index=True)

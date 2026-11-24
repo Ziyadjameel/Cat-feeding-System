@@ -13,7 +13,6 @@ export default function Layout() {
         contentStyle: { backgroundColor: colors.background },
       }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="history/[id]" options={{ title: 'Feeding history' }} />
       </Stack>
     </>
   )

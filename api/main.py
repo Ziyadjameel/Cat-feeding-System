@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from database import Cat, Feeding, engine
+from database import Cat, Feeding, FeedingLog, engine
 
 app = FastAPI(title="Cat Feeding System")
 
@@ -94,3 +94,26 @@ def remove_feeding(cat_id: int, feeding_id: int, db: Database) -> Response:
     db.delete(entry)
     db.commit()
     return Response(status_code=204)
+
+
+class LastFeeding(BaseModel):
+    last_fed_at: int | None
+
+
+@app.get("/feeding")
+def last_feeding(db: Database) -> LastFeeding:
+    timestamps = db.execute(
+        select(
+            select(func.max(FeedingLog.fed_at)).scalar_subquery(),
+            select(func.max(Feeding.fed_at)).scalar_subquery(),
+        )
+    ).one()
+    return LastFeeding(last_fed_at=max((value for value in timestamps if value is not None), default=None))
+
+
+@app.post("/feeding", status_code=201)
+def log_feeding(db: Database) -> LastFeeding:
+    timestamp = time_ns() // 1_000_000
+    db.add(FeedingLog(fed_at=timestamp))
+    db.commit()
+    return LastFeeding(last_fed_at=timestamp)

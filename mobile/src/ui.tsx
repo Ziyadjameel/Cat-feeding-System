@@ -20,8 +20,6 @@ export const styles = StyleSheet.create({
   detail: { color: colors.muted, fontSize: 15, lineHeight: 22 },
   card: { backgroundColor: colors.card, borderColor: colors.line, borderWidth: 1, borderRadius: 22, padding: 18, gap: 12 },
   row: { flexDirection: 'row', gap: 12, alignItems: 'center', flexWrap: 'wrap' },
-  input: { flex: 1, minWidth: 145, minHeight: 48, color: colors.ink, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, borderRadius: 14, paddingHorizontal: 14, fontSize: 16 },
-  avatar: { backgroundColor: colors.soft, borderRadius: 15, padding: 10, fontSize: 24 },
   error: { color: colors.error, fontSize: 15, lineHeight: 22 },
 })
 
@@ -66,9 +64,14 @@ export function errorMessage(error: unknown) {
 export function elapsed(timestamp: number, now: number) {
   const minutes = Math.max(0, Math.floor((now - timestamp) / 60_000))
   if (minutes === 0) return 'Just now'
-  if (minutes < 60) return `${minutes} min ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours} hr ${minutes % 60} min ago`
-  const days = Math.floor(hours / 24)
-  return `${days} ${days === 1 ? 'day' : 'days'} ago`
+  const units = [
+    [Math.floor(minutes / 1440), 'day'],
+    [Math.floor(minutes / 60) % 24, 'hour'],
+    [minutes % 60, 'minute'],
+  ] as const
+  const parts = units
+    .filter(([count]) => count > 0)
+    .slice(0, 2)
+    .map(([count, unit]) => `${count} ${unit}${count === 1 ? '' : 's'}`)
+  return `${parts.join(', ')} ago`
 }
